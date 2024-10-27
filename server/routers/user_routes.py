@@ -86,13 +86,13 @@ def token_data(request: Request):
 
 
 # get a particular user by id
-@u_routes.get("/user/{id}", response_model=UserResponse)
+@u_routes.get("/{id}", response_model=UserResponse)
 def get_user(id: int, db: Session = Depends(get_db)) -> User:
     user = db.query(User).filter(User.id == id).first()
     return user
 
 # get all of the users
-@u_routes.get("/users") 
+@u_routes.get("/all-users") 
 def get_all_users(db: Session = Depends(get_db)) -> list[UserResponse]:
     users = db.query(User).all()
     return [UserResponse.model_validate(u) for u in users]
