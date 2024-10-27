@@ -21,7 +21,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 class JWTMiddleWare(BaseHTTPMiddleware):
     async def dispatch(self, request, call_next):
         # paths to exclude
-        excluded_paths = {"/user/login", "/user/create-account"}
+        excluded_paths = {"/openapi.json", "/docs", "/user/login", "/user/create-account"}
 
         # check if the request path is excluded
         if request.url.path in excluded_paths:
