@@ -8,6 +8,7 @@ import AlertComponent from "../components/AlertComponent"
 function Signup() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [showModal, setShowModal] = useState(false)
   const [form, setForm] = useState({
     name: "",
     username: "",
@@ -29,6 +30,7 @@ function Signup() {
           password: ""
         })
         console.log(res)
+        setShowModal(true)
       })
       .catch(err => {
         console.log(err.response)
@@ -89,7 +91,7 @@ function Signup() {
                 handleTextChange={(e) => setForm({ ...form, password: e.target.value })}
               />
 
-              <AlertComponent errorMessage={error} />
+              {error && <AlertComponent errorMessage={error} />}
 
               <p></p>
               <div className="card-actions flex justify-center">
@@ -103,6 +105,26 @@ function Signup() {
               </div>
 
             </form>
+
+            {showModal && (
+              <dialog id="my_modal_1" className="modal" open>
+                <div className="modal-box">
+                  <h3 className="font-bold text-lg">{`Hello! Welcome to ${APP_NAME}!`}</h3>
+                  <p className="py-4 text-md">
+                    Congratulations! Your account has been created. You can now log in and start using our services!"
+                  </p>
+                  <p className="py-4 text-sm">
+                    <a className="text-blue-500 font-black" href="/login">Login Here</a>
+                  </p>
+                  <div className="modal-action">
+                    <form method="dialog">
+                      <button onClick={() => setShowModal(false)} className="btn">Close</button>
+                    </form>
+                  </div>
+                </div>
+              </dialog>
+            )}
+
           </div>
         </div>
       </div>
