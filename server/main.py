@@ -7,6 +7,7 @@ import os
 load_dotenv()
 
 from routers.user_routes import u_routes
+from routers.websockets import wb_routes
 from database import Base, engine
 from routers.middleware.auth import JWTMiddleWare
 
@@ -18,8 +19,9 @@ allowed_url = os.getenv("ALLOWED_URL")
 if not allowed_url:
     raise ValueError('ALLOWED_URL env variable not set')
 
-allowed_origins = [allowed_url]  # Wrap the URL in a list
+allowed_origins = [allowed_url, 'http://localhost:3000']  # Wrap the URL in a list
 
+app.add_middleware(JWTMiddleWare)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
@@ -28,5 +30,5 @@ app.add_middleware(
     allow_headers=['*'],
 )
 
-app.add_middleware(JWTMiddleWare)
 app.include_router(u_routes, prefix="/user", tags=["Users"])
+app.include_router(wb_routes, tags=["Websocket"])

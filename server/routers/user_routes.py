@@ -17,6 +17,10 @@ u_routes = APIRouter()
 # create account API route
 @u_routes.post("/create-account", response_model=UserResponse)
 def create_account(user: UserCreate, db: Session = Depends(get_db)) -> User:
+    # check if all fields are not empty
+    if not user.username or not user.email or not user.password or not user.name:
+        raise HTTPException(status_code=400, detail="All fields are required")
+
     # check if the user inputted email or username already exists
     existing_user = db.query(User).filter(
         or_ (
@@ -44,7 +48,7 @@ def login(user: UserLogin, response: Response, db: Session = Depends(get_db)) ->
     # set jwt token in cookie
     expires_time = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MIN)
     jwt_token = create_access_token({"username":user_.username, "email":user_.email}, expires_delta=expires_time)
-    response.set_cookie(key="jwt_token", value=jwt_token, httponly=True) 
+    response.set_cookie(key="jwt_token", value=jwt_token, httponly=True, samesite="None", secure=True) 
     user_.is_logged_in = True
     db.commit()
     
