@@ -19,8 +19,10 @@ u_routes = APIRouter()
 def create_account(user: UserCreate, db: Session = Depends(get_db)) -> User:
     # check if all fields are not empty
     if not user.username or not user.email or not user.password or not user.name:
-        raise HTTPException(status_code=400, detail="All fields are required")
+        raise HTTPException(status_code=400, detail="All fields are required. Please try again.")
 
+    if "@" not in user.email:
+        raise HTTPException(status_code=400, detail="Invalid email format.Please try again.")
     # check if the user inputted email or username already exists
     existing_user = db.query(User).filter(
         or_ (
@@ -31,7 +33,7 @@ def create_account(user: UserCreate, db: Session = Depends(get_db)) -> User:
 
     # if it does exists throw HTTP error
     if existing_user:
-        raise HTTPException(status_code=400, detail="Email and/or username already registered")
+        raise HTTPException(status_code=400, detail="Email and(or) username already registered.")
     return create_user(db, user) 
 
 
