@@ -1,10 +1,14 @@
-import { useState } from "react"
+import { useState, useContext } from "react"
 import Axios from "../constants/api"
 import APP_NAME from "../constants/constants"
 import FormField from "../components/FormField"
 import AlertComponent from "../components/AlertComponent"
+import { AuthContext } from "../context/AuthProvider"
+import { useNavigate } from "react-router-dom"
 
 function Login() {
+  const navigate = useNavigate()
+  const { currentUser, isLoggedIn } = useContext(AuthContext)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [form, setForm] = useState({
@@ -26,13 +30,23 @@ function Login() {
           email: "",
           password: ""
         })
+        navigate("/home")
       })
       .catch(err => {
-        console.log(err.data)
+        console.log(err.response)
+        if (err.response.data) {
+          const errorMessage = err.response.data.detail || "An unknown error occurred.";
+          setError(errorMessage);
+        }
       })
       .finally(() => {
         setLoading(false)
       })
+  }
+
+  // if user is loggedIn redirect to homepage
+  if (isLoggedIn && currentUser) {
+    navigate("/home")
   }
   return (
     <>
@@ -73,7 +87,7 @@ function Login() {
                 handleTextChange={(e) => setForm({ ...form, password: e.target.value })}
               />
 
-              <AlertComponent errorMessage={error} />
+              {error && <AlertComponent errorMessage={error} />}
 
               <p></p>
               <div className="card-actions flex justify-center">

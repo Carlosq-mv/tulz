@@ -1,11 +1,15 @@
 import Axios from "../constants/api"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import FormField from "../components/FormField"
 import APP_NAME from "../constants/constants"
 import AlertComponent from "../components/AlertComponent"
+import { useNavigate } from "react-router-dom"
+import { AuthContext } from "../context/AuthProvider"
 
 
 function Signup() {
+  const navigate = useNavigate()
+  const { currentUser, isLoggedIn } = useContext(AuthContext)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [showModal, setShowModal] = useState(false)
@@ -45,6 +49,10 @@ function Signup() {
       })
   }
 
+  // if user is loggedIn redirect to homepage
+  if (isLoggedIn && currentUser) {
+    navigate("/home")
+  }
   return (
     <>
       <div className="flex items-center justify-center min-h-screen">
