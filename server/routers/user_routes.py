@@ -40,12 +40,16 @@ def create_account(user: UserCreate, db: Session = Depends(get_db)) -> User:
 # login API route
 @u_routes.post("/login", response_model=UserResponse)
 def login(user: UserLogin, response: Response, db: Session = Depends(get_db)) -> User:
+# check if all fields are not empty
+    if not user.username or not user.email or not user.password:
+        raise HTTPException(status_code=400, detail="All fields are required. Please try again.")
+
     user_ = db.query(User).filter(User.email == user.email, User.username == user.username).first()
     if user_ is None:
         raise HTTPException(status_code=404, detail="User does exists")
     # check if password is correct
     if not user_.check_password(user.password):
-       raise HTTPException(status_code=404, detail="password is not correct") 
+       raise HTTPException(status_code=404, detail="The password you entered is incorrect. Please try again.") 
  
     # set jwt token in cookie
     expires_time = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MIN)
