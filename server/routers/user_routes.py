@@ -1,7 +1,5 @@
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import Response
-from sqlalchemy.orm import Session
-from sqlalchemy import or_
 from datetime import timedelta
 
 from dependencies import get_user_services
