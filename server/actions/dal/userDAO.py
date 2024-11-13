@@ -5,6 +5,7 @@ from schemas.user_schema import UserCreate, UserLogin
 from models.user import User
 
 
+
 class UserDAO():
     # initialize UserDAO with database
     def __init__(self, db: Session):
@@ -41,7 +42,12 @@ class UserDAO():
        
         return current_user 
    
-    
+  
+    # get all the users in the database
+    def get_all_users(self) -> list[User]:
+        return self.db.query(User).all()
+
+
     # get the user with UserCreate schema
     def get_user_by_data(self, user: UserCreate) -> User:
         u = self.db.query(User).filter(
@@ -64,3 +70,4 @@ class UserDAO():
     def get_user(self, user: UserLogin) -> User:
         current_user = self.db.query(User).filter(User.username == user.username, User.email == user.email).first()
         return current_user
+   
