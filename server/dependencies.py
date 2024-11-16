@@ -2,7 +2,7 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 
 from database import SessionLocal
-from actions.dal.userDAO import UserDAO 
+from actions.dal.usersDAO import UserDAO 
 from actions.services.userServices import UserServices
 
 
