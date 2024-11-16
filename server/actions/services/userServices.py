@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from schemas.user_schema import UserCreate, UserLogin, UserBase
-from actions.dal.userDAO import UserDAO
+from actions.dal.usersDAO import UserDAO
 from models.user import User
 
 class UserServices():
@@ -84,13 +84,22 @@ class UserServices():
         """ Logs out the user by updating logged in status in database.
 
         Args:
-            username (str): _description_
-            email (str): _description_
+            username (str): Username of current user. 
+            email (str): Email of current user.
 
         Returns:
             User: The logged-out user object. 
         """
         return self.dao.logout_user(username, email)
+    
+    
+    async def get_all_users(self) -> list[User]:
+        """ Retrieves all users in database.
+
+        Returns:
+            list[User]: List of users in databae. 
+        """
+        return self.dao.get_all_users()
         
     
     async def get_current_user(self, username: str, email: str) -> User:

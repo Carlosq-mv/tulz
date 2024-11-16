@@ -50,7 +50,7 @@ async def current_user(request: Request, user_services: UserServices = Depends(g
 
 
 # # get all of the users
-# @u_routes.get("/all-users",response_model=list[UserResponse]) 
-# def get_all_users(db: Session = Depends(get_db)) -> list[UserResponse]:
-#     users = db.query(User).all()
-#     return [UserResponse.model_validate(u) for u in users]
+@u_routes.get("/all-users",response_model=list[UserResponse]) 
+async def get_all_users(user_services: UserServices = Depends(get_user_services)) -> list[UserResponse]:
+    users = await user_services.get_all_users() 
+    return [UserResponse.model_validate(u) for u in users]
