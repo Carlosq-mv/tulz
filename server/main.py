@@ -8,6 +8,7 @@ load_dotenv()
 
 from routers.user_routes import u_routes
 from routers.websockets import wb_routes
+from routers.friendship_api import f_routes
 from database import Base, engine
 from routers.middleware.auth import JWTMiddleWare
 
@@ -32,3 +33,4 @@ app.add_middleware(
 
 app.include_router(u_routes, prefix="/user", tags=["Users"])
 app.include_router(wb_routes, tags=["Websocket"])
+app.include_router(f_routes, prefix="/friend", tags=["Friends"])
