@@ -3,7 +3,9 @@ from sqlalchemy.orm import Session
 
 from database import SessionLocal
 from actions.dal.usersDAO import UserDAO 
+from actions.dal.friendshipDAO import FriendshipDAO
 from actions.services.userServices import UserServices
+from actions.services.friendshipServices import FriendshipServices
 
 
 def get_db():
@@ -42,3 +44,8 @@ def get_user_services(db: Session = Depends(get_db)) -> UserServices:
     """
     dao = UserDAO(db)
     return UserServices(dao)
+
+
+def get_friend_services(db: Session = Depends(get_db)) -> FriendshipServices:
+    dao = FriendshipDAO(db)
+    return FriendshipServices(dao)
