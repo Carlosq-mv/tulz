@@ -4,7 +4,6 @@ import jwt, os
 
 from models.user import User
 from schemas.token_schema import TokenData
-from schemas.user_schema import UserResponse
 
 
 SECRET_KEY = os.getenv("SECRET_KEY")
@@ -48,15 +47,7 @@ class JwtHelper():
         except jwt.InvalidTokenError:
             raise credentials_exception
 
-    async def get_user(self, email: str, username: str) -> UserResponse:
+    async def get_user(self, email: str, username: str) -> User:
         user = self.db.query(User).filter(User.username==username, User.email==email).first()
 
-        if user is None:
-            return None
-        return UserResponse(
-            id=user.id,  # Assuming your User model has an id attribute
-            name=user.name,
-            username=user.username,
-            email=user.email,
-            is_logged_in=user.is_logged_in # Or derive this from your user logic
-        )
+        return user
