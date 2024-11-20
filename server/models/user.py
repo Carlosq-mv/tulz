@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean
 from sqlalchemy.orm import relationship
 from database import Base
-from models.message import Message
 import bcrypt
 
 
@@ -14,9 +13,6 @@ class User(Base):
     password = Column(String, nullable=False)
     is_logged_in = Column(Boolean, nullable=False, default=False)
 
-    # Specify foreign keys for the relationships
-    messages_sent = relationship("Message", back_populates="sender", foreign_keys=[Message.sender_id])
-    messages_received = relationship("Message", back_populates="recipient", foreign_keys=[Message.recipient_id])
 
     def set_password(self, password: str):
         p = password.encode("utf-8")
