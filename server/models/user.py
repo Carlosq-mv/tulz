@@ -2,17 +2,19 @@ from sqlalchemy import Column, Integer, String, Boolean
 from sqlalchemy.orm import relationship
 from database import Base
 import bcrypt
+from .contact import Contact
 
 
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
-    username = Column(String, nullable=False)
+    username = Column(String, nullable=False, unique=True)
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
     is_logged_in = Column(Boolean, nullable=False, default=False)
 
+    contacts = relationship("Contact", back_populates="user", cascade="all, delete-orphan")
 
     def set_password(self, password: str):
         p = password.encode("utf-8")

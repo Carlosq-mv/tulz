@@ -1,7 +1,7 @@
 from fastapi import HTTPException 
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
-import jwt
+import jwt as pyjwt
 from datetime import timedelta, datetime, timezone
 
 from database import SessionLocal
@@ -38,5 +38,5 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
     else:
         expire = datetime.now(timezone.utc) + timedelta(minutes=15)       
     to_encode.update({"exp" : expire})
-    encoded_jwt= jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt= pyjwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
