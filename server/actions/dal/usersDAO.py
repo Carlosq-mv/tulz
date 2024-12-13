@@ -66,6 +66,12 @@ class UserDAO():
         return user
 
 
+    # get the user with only the username
+    def get_user_by_username(self, username: str) -> User:
+        user = self.db.query(User).filter(User.username == username).first()
+        return user
+
+
    # get a user with login data
     def get_user(self, user: UserLogin) -> User:
         current_user = self.db.query(User).filter(User.username == user.username, User.email == user.email).first()

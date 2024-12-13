@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from schemas.user_schema import UserCreate, UserLogin, UserBase
+from schemas.user_schema import UserCreate, UserLogin, UserBase, UserResponse
 from actions.dal.usersDAO import UserDAO
 from models.user import User
 
@@ -15,7 +15,7 @@ class UserServices():
         self.dao = dao
 
     
-    async def add_user(self, user: UserCreate) -> User:
+    async def add_user(self, user: UserCreate) -> UserResponse:
         """ Add a new user to the system and provides data validation.
             It will first validate the user data and check if the user
             exists. If the user exists raise an HTTPException.
@@ -40,7 +40,7 @@ class UserServices():
         return self.dao.create_user(user) 
 
 
-    async def login_user(self, user: UserLogin) -> User:
+    async def login_user(self, user: UserLogin) -> UserResponse:
         """ Handles user login by validating user credentials.
             Checks if the user exists and then if the password is correct.
         
@@ -80,7 +80,7 @@ class UserServices():
         return user
 
 
-    async def logout_user(self, username: str, email: str) -> User:
+    async def logout_user(self, username: str, email: str) -> UserResponse:
         """ Logs out the user by updating logged in status in database.
 
         Args:
@@ -93,7 +93,7 @@ class UserServices():
         return self.dao.logout_user(username, email)
     
     
-    async def get_all_users(self) -> list[User]:
+    async def get_all_users(self) -> list[UserResponse]:
         """ Retrieves all users in database.
 
         Returns:
@@ -102,7 +102,7 @@ class UserServices():
         return self.dao.get_all_users()
         
     
-    async def get_current_user(self, username: str, email: str) -> User:
+    async def get_current_user(self, username: str, email: str) -> UserResponse:
         """ Retrieves the current logged in user from the database.
 
         Args:
@@ -115,7 +115,7 @@ class UserServices():
         return self.dao.get_user_by_username_and_email(username, email)
         
         
-    async def check_user_exists(self, user: UserCreate) -> User:
+    async def check_user_exists(self, user: UserCreate) -> UserResponse:
         """ Helper function that checks if a user already exists in database.
 
         Args:
