@@ -3,9 +3,9 @@ from sqlalchemy.orm import Session
 
 from database import SessionLocal
 from actions.dal.usersDAO import UserDAO 
-from actions.dal.friendshipDAO import FriendshipDAO
+from actions.dal.contactDAO import ContactDAO
 from actions.services.userServices import UserServices
-from actions.services.friendshipServices import FriendshipServices
+from actions.services.contactService import ContactService
 
 
 def get_db():
@@ -46,6 +46,23 @@ def get_user_services(db: Session = Depends(get_db)) -> UserServices:
     return UserServices(dao)
 
 
-def get_friend_services(db: Session = Depends(get_db)) -> FriendshipServices:
-    dao = FriendshipDAO(db)
-    return FriendshipServices(dao)
+def get_contact_services(db: Session = Depends(get_db)) -> ContactService:
+    """ Provides an instance of ContactService for handling contact-related operations
+    
+        This function is used by FastAPI's dependency injection system to inject
+        an instance of the `ContactService` class into the route handlers that
+        require it. The `ContactDAO` (data access object) is created with the provided
+        database session (`db`), and `ContactService` is initialized with `ContactDAO`.   
+
+    Args:
+        db (Session, optional): The database session injected by FastAPI's Depends. 
+                                Defaults to Depends(get_db).
+
+    Returns:
+        ContactService: An instance of the ContactService class, which handles
+        contact-related logic, such blocking, unblocking, rejecting, accepting contact
+        requests, etc. 
+    """
+    contact_dao = ContactDAO(db)
+    user_dao = UserDAO(db)
+    return ContactService(contact_dao, user_dao)
