@@ -64,7 +64,7 @@ class UserServices():
 
         # if we can't find a user then raise an error
         if current_user is None:
-            raise HTTPException(status_code=404, detail="User does not exist")  
+            raise HTTPException(status_code=404, detail="User does not exist. Please try again.")  
         
         # check if the provided password is correct
         if not current_user.check_password(user.password):
