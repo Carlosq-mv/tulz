@@ -19,7 +19,7 @@ allowed_url = os.getenv("ALLOWED_URL")
 if not allowed_url:
     raise ValueError('ALLOWED_URL env variable not set')
 
-allowed_origins = [allowed_url, 'http://localhost:3000']  # Wrap the URL in a list
+allowed_origins = [allowed_url, 'http://localhost:5173']  # Wrap the URL in a list
 
 app.add_middleware(JWTMiddleWare)
 app.add_middleware(
