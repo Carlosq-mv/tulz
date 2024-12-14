@@ -1,25 +1,49 @@
 <script>
 	import FormField from '$lib/components/FormField.svelte';
+  import Alert from '$lib/components/Alert.svelte';
+  import { login } from '$lib/api/auth';
 
 	let form = $state({
 		username: '',
 		email: '',
 		password: ''
-	});
+	})
+  let loading = $state(false)
+  let errorMessage = $state("")
+
+  async function handleLogin(event) {
+    loading = true
+    event.preventDefault()
+
+    try {
+      const res = await login(form)
+      console.log(res)
+      form.username = ""
+      form.email = ""
+      form.password = ""
+      errorMessage = ""
+    } catch (error) {
+      console.log(error)
+      errorMessage = error
+    } finally {
+      loading = false
+    }
+  }
+
 </script>
 
 <div class="bg-base-200 flex min-h-screen items-center justify-center">
-	<div class="card lg:card-side bg-base-100 w-full max-w-4xl shadow-xl">
-		<figure class="lg:w-1/2">
-			<img
-				src="https://picsum.photos/seed/login/800/600"
-				alt="Random"
+	<div class="card lg:card-side bg-base-100  min-h-[75vh] w-full max-w-7xl shadow-xl">
+		<figure class="lg:w-3/5">
+      <img
+				src="/wood.jpg"
+				alt="wood"
 				class="h-full w-full object-cover"
 			/>
 		</figure>
 		<div class="card-body lg:w-1/2">
-			<h2 class="card-title mb-6 text-2xl font-bold">Login</h2>
-			<form>
+			<h2 class="card-title mb-6 text-3xl font-bold text-accent prose">Login to Tulz</h2>
+			<form onsubmit={handleLogin} method="POST">
 				<FormField
 					type="text"
 					labelname="Username"
@@ -85,15 +109,22 @@
 					</svg>
 				</FormField>
 
-				<div class="form-control mt-6">
-					<button type="button" class="btn btn-primary" onclick={() => console.log($state.snapshot(form))}>
-						Login
+        {#if errorMessage}
+          <Alert {errorMessage}/>
+        {/if}
+
+				<div class="form-control mt-10">
+					<button type="submit" class="btn btn-primary">
+            {#if loading}
+              <span class="loading loading-spinner loading-md"></span>
+            {:else}
+              Login
+            {/if}
 					</button>
 				</div>
-        
 			</form>
-			<div class="divider">OR</div>
-			<div class="text-center">
+			<div class="divider pt-8">OR</div>
+			<div class="text-center prose">
 				<p>Don't have an account?</p>
 				<a href="#" class="link link-primary">Sign up now</a>
 			</div>
