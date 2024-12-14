@@ -1,26 +1,28 @@
 <script>
 	import FormField from '$lib/components/FormField.svelte';
 	import Alert from '$lib/components/Alert.svelte';
-	import { login } from '$lib/api/auth';
+	import { signup } from '$lib/api/auth';
 
 	let form = $state({
 		username: '',
 		email: '',
-		password: ''
+		password: '',
+		name: ''
 	});
 	let loading = $state(false);
 	let errorMessage = $state('');
 
-	async function handleLogin(event) {
+	async function handleSignup(event) {
 		loading = true;
 		event.preventDefault();
 
 		try {
-			const res = await login(form);
+			const res = await signup(form);
 			console.log(res);
 			form.username = '';
 			form.email = '';
 			form.password = '';
+			form.name = '';
 			errorMessage = '';
 		} catch (error) {
 			console.log(error);
@@ -34,14 +36,36 @@
 <div class="bg-base-200 flex min-h-screen items-center justify-center">
 	<div class="card lg:card-side bg-base-100 min-h-[75vh] w-full max-w-7xl shadow-xl">
 		<figure class="lg:w-3/5">
-			<img src="/wood.jpg" alt="wood" class="h-full w-full object-cover" />
+			<img src="/hut.jpg" alt="hut" class="h-full w-full object-cover" />
 		</figure>
 		<div class="card-body lg:w-1/2">
-			<h2 class="card-title text-accent prose mb-6 text-4xl font-bold">Login to Tulz</h2>
+			<h2 class="card-title text-accent prose mb-6 text-4xl font-bold">Signup to Tulz</h2>
 			{#if errorMessage}
 				<Alert {errorMessage} />
 			{/if}
-			<form onsubmit={handleLogin} method="POST">
+			<form onsubmit={handleSignup} method="POST">
+				<FormField
+					type="text"
+					labelname="Name"
+					placeholder="Enter Name"
+					id="name"
+					bind:value={form.name}
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="lucide lucide-book-user h-4 w-4 opacity-70"
+						><path d="M15 13a3 3 0 1 0-6 0" /><path
+							d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"
+						/><circle cx="12" cy="8" r="2" /></svg
+					>
+				</FormField>
+
 				<FormField
 					type="text"
 					labelname="Username"
@@ -112,15 +136,15 @@
 						{#if loading}
 							<span class="loading loading-spinner loading-md"></span>
 						{:else}
-							Login
+							Signup
 						{/if}
 					</button>
 				</div>
 			</form>
 			<div class="divider pt-8">OR</div>
 			<div class="prose text-center">
-				<p>Don't have an account?</p>
-				<a href="/signup" class="link link-primary">Sign up now</a>
+				<p>Already have an account?</p>
+				<a href="/login" class="link link-primary">Login here</a>
 			</div>
 		</div>
 	</div>
