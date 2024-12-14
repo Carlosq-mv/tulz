@@ -2,7 +2,7 @@
 	let { type, labelname, placeholder, id, value = $bindable(), children } = $props();
 </script>
 
-<div class="form-control mt-4">
+<div class="form-control mt-8">
 	<label for={id} class="label">
 		<span class="label-text">{labelname}</span>
 	</label>
@@ -13,9 +13,3 @@
 		<input class="grow" bind:value={value} {type} {placeholder} />
 	</label>
 </div>
-
-<!-- let form = $state({
-  username: "", 
-  email: "",
-  password: ""
-}) -->
