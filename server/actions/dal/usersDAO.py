@@ -22,26 +22,6 @@ class UserDAO():
         # return the user or None
         return new_user 
 
-
-    # update the user's status as logged in
-    def login_user(self, user: User) -> User:
-        user.is_logged_in = True
-        self.db.commit()
-        return user
-
-
-    # update the user's status as logged out
-    def logout_user(self, username: str, email: str) -> User:
-        # get the user based on username and email
-        current_user = self.db.query(User).filter(User.username == username, User.email == email).first()
-
-        # if there is a user, update the user to be logged out
-        if current_user:
-            current_user.is_logged_in = False
-            self.db.commit()
-       
-        return current_user 
-   
   
     # get all the users in the database
     def get_all_users(self) -> list[User]:

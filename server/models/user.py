@@ -12,7 +12,6 @@ class User(Base):
     username = Column(String, nullable=False, unique=True)
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
-    is_logged_in = Column(Boolean, nullable=False, default=False)
 
     contacts = relationship("Contact", back_populates="user", cascade="all, delete-orphan")
 
