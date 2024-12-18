@@ -1,12 +1,9 @@
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import Response
-from datetime import timedelta
 
 from dependencies import get_user_services
 from schemas.user_schema import UserResponse, UserCreate, UserLogin
-from models.user import User
-from routers.middleware.auth import create_access_token 
-from actions.util.jwtHelper import ACCESS_TOKEN_EXPIRE_MIN
+from schemas.token_schema import *
 from actions.services.userServices import UserServices
 
 
@@ -21,23 +18,56 @@ async def create_account(user: UserCreate, user_services: UserServices = Depends
 
 
 # login API route
-@u_api.post("/login", response_model=UserResponse)
-async def login(user: UserLogin, response: Response, user_services: UserServices = Depends(get_user_services)) -> UserResponse:
+@u_api.post("/login", response_model=TokenData)
+async def login(user: UserLogin, response: Response, user_services: UserServices = Depends(get_user_services)) -> TokenData:
+    # validate user login data
+    jwt_access_token, jwt_refresh_token, u = await user_services.login_user(user)
 
-    expires_time = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MIN)
-    jwt_token = create_access_token({"username":user.username, "email":user.email}, expires_delta=expires_time)
-    response.set_cookie(key="jwt_token", value=jwt_token, httponly=True, samesite="None", secure=True) 
+    response.set_cookie(key="jwt_token", value=jwt_access_token, httponly=True, samesite="None", secure=True) 
+    response.set_cookie(key="refresh_token", value=jwt_refresh_token, httponly=True, samesite="None", secure=True)
 
-    return await user_services.login_user(user)
+    return TokenData(
+        access_token=jwt_access_token,
+        token_type="access",
+        id=u.id
+    )
+
+
+# refresh token API route
+@u_api.get("/refresh-token", response_model=TokenData)
+async def refresh_token(request: Request, response: Response, user_services: UserServices = Depends(get_user_services) ):
+    refresh_token = request.cookies.get("refresh_token")
+    # current_user = request.state.user
+
+    new_access_token, new_refresh_token, user_id = await user_services.handle_refresh_token(refresh_token)
+
+    response.delete_cookie("jwt_token")
+    response.delete_cookie("refresh_token")
+
+    response.set_cookie(key="jwt_token", value=new_access_token, httponly=True, samesite="None", secure=True) 
+    response.set_cookie(key="refresh_token", value=new_refresh_token, httponly=True, samesite="None", secure=True)
+
+
+    return TokenData(
+        access_token=new_access_token,
+        token_type="access",
+        id=user_id
+    )
 
 
 # # logout route
 @u_api.post("/logout", response_model=UserResponse)
-async def logout(response: Response, request: Request, user_services: UserServices = Depends(get_user_services)) -> UserResponse:
+async def logout(response: Response, request: Request) -> UserResponse:
     user = request.state.user
 
     response.delete_cookie("jwt_token")
-    return await user_services.logout_user(user.username, user.email)
+    response.delete_cookie("refresh_token")
+    
+    # clear the user data from the request state
+    request.state.user = None
+    request.state.token = None
+
+    return user 
 
 
 # # get current auth user API route

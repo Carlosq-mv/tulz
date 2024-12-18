@@ -1,7 +1,11 @@
+from datetime import timedelta
+from typing import Tuple
 from fastapi import HTTPException
 from schemas.user_schema import UserCreate, UserLogin, UserBase, UserResponse
 from actions.dal.usersDAO import UserDAO
 from models.user import User
+from actions.util.jwtHelper import ACCESS_TOKEN_EXPIRE_MIN, JwtHelper
+from schemas.token_schema import TokenData
 
 class UserServices():
     def __init__(self, dao: UserDAO):
@@ -40,12 +44,15 @@ class UserServices():
         return self.dao.create_user(user) 
 
 
-    async def login_user(self, user: UserLogin) -> UserResponse:
+    async def login_user(self, user: UserLogin) -> Tuple[str, str, User]:
         """ Handles user login by validating user credentials.
             Checks if the user exists and then if the password is correct.
+            Then it will create the access & refresh tokem
         
         Args:
-            user (UserLogin): Login data.
+            user (User): User object.
+            jwt_access_token: JWT access token (15 min).
+            jwt_refresh_token: JWT refresh token (7 dayshg).
 
         Raises:
             HTTPException: User does not exists based on login data.
@@ -53,7 +60,7 @@ class UserServices():
             HTTPException: Error logging user at current moment. 
 
         Returns:
-            User: The newly logged in user. 
+            Tuple[str, str, User]: Tuple with both tokens & the newly logged in user. 
         """
 
         # validate login data
@@ -70,29 +77,51 @@ class UserServices():
         if not current_user.check_password(user.password):
             raise HTTPException(status_code=404, detail="The password you entered is incorrect. Please try again.") 
        
-        # log the user in (set logged_in status to True) 
-        user = self.dao.login_user(current_user)
+        expires_time = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MIN)
 
-        # if something goes wrong with logging in, raise an error
-        if not user:
-            raise HTTPException(status_code=404, detail="Can not login at the current moment") 
+        # create both tokens
+        jwt_access_token = await JwtHelper.create_access_token({"user_id":current_user.id}, expires_delta=expires_time)
+        jwt_refresh_token = await JwtHelper.create_refresh_token({"user_id":current_user.id})
 
-        return user
+        # return the token and user object
+        return jwt_access_token, jwt_refresh_token, current_user
 
 
-    async def logout_user(self, username: str, email: str) -> UserResponse:
-        """ Logs out the user by updating logged in status in database.
+    async def handle_refresh_token(self, refresh_token: str) -> Tuple[str, str, int]:
+        """ Handles refreshing token once the access token expires.
+            Validates the refresh token and then will create a new
+            access & refresh token.
 
         Args:
-            username (str): Username of current user. 
-            email (str): Email of current user.
+            refresh_token (str): Current refresh token that is in cookie. 
+
+        Raises:
+            HTTPException: There is no refresh token.
+            HTTPException: Token payload does not have 'user_id'. 
 
         Returns:
-            User: The logged-out user object. 
+            Tuple[str, str]: Tuples with the new tokens and user id,
         """
-        return self.dao.logout_user(username, email)
-    
-    
+        if not refresh_token or refresh_token is None:
+            raise HTTPException(status_code=401, detail="Refresh token missing")
+          
+        # Verify and decode the refresh token
+        payload = await JwtHelper.verify_refresh_token(refresh_token)  
+
+        user_id = payload.get("user_id")
+        if not user_id:
+            raise HTTPException(status_code=401, detail="Invalid refresh token")
+
+        # Generate a new access token
+        expires_time = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MIN)
+
+        # create both tokens
+        new_access_token = await JwtHelper.create_access_token({"user_id":user_id}, expires_delta=expires_time)
+        new_refresh_token = await JwtHelper.create_refresh_token({"user_id":user_id})
+
+        return new_access_token, new_refresh_token, user_id
+
+
     async def get_all_users(self) -> list[UserResponse]:
         """ Retrieves all users in database.
 
