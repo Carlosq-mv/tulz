@@ -20,5 +20,4 @@ class UserLogin(BaseModel):
 # used to return user 
 class UserResponse(UserBase):
     id: int
-    is_logged_in: bool
     model_config = ConfigDict(from_attributes=True)
