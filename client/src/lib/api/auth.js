@@ -45,3 +45,25 @@ export async function signup(sigupData) {
     throw error;
   }
 }
+
+export async function logout() {
+  try {
+    const res = await fetch('http://localhost:8000/user/logout', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    // check for non-200 status codes
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.detail || 'Failed to logout.');
+    }
+
+    return await res.json();
+  } catch (error) {
+    throw error;
+  }
+}
