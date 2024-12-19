@@ -75,7 +75,7 @@ class UserServices():
         
         # check if the provided password is correct
         if not current_user.check_password(user.password):
-            raise HTTPException(status_code=404, detail="The password you entered is incorrect. Please try again.") 
+            raise HTTPException(status_code=404, detail="The password you entered is incorrect.") 
        
         expires_time = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MIN)
 
