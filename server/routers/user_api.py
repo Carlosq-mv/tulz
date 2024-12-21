@@ -34,8 +34,8 @@ async def login(user: UserLogin, response: Response, user_services: UserServices
 
 
 # refresh token API route
-@u_api.get("/refresh-token", response_model=TokenData)
-async def refresh_token(request: Request, response: Response, user_services: UserServices = Depends(get_user_services) ):
+@u_api.post("/refresh-token", response_model=TokenData)
+async def refresh_token(request: Request, response: Response, user_services: UserServices = Depends(get_user_services)) -> TokenData:
     refresh_token = request.cookies.get("refresh_token")
     # current_user = request.state.user
 
