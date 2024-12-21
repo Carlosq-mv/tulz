@@ -67,3 +67,30 @@ export async function logout() {
     throw error;
   }
 }
+
+export async function getCurrentAuthUser() {
+  try {
+    const res = await fetch('http://localhost:8000/user/current-user', {
+      method: 'GET',
+      credentials: 'include',
+    });
+
+    return res;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function refreshToken() {
+  try {
+    const res = await fetch('http://localhost:8000/user/refresh-token', {
+      method: 'POST',
+      credentials: 'include'
+    })
+
+    // parse and return the response JSON
+    return await res.json();
+  } catch (error) {
+    throw error;
+  }
+}
