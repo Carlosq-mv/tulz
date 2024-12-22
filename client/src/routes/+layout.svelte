@@ -4,8 +4,15 @@
   import { getCurrentAuthUser, refreshToken } from '$lib/api/auth';
   import { goto } from '$app/navigation';
   import { writable } from 'svelte/store';
+  import { page } from '$app/stores';
+
+  import { logout } from '$lib/api/auth';
+  import Navbar from '$lib/components/Navbar.svelte';
+  import Sidebar from '$lib/components/Sidebar.svelte';
+  import { redirect } from '@sveltejs/kit';
 
   let { children } = $props();
+  let excludedRoutes = ['/login', '/signup'];
 
   // reactive variable 'user' that initialized will be used to hold the authenticated user data.
   let user = $state(null);
@@ -24,7 +31,12 @@
       // check if Unauthorized status
       if (res.status === 401) {
         // call end point to refresh jwt token
-        await refreshToken();
+        const refRes = await refreshToken();
+        // if Unauthorized status for refreshToken, it means user doesn't have a refreshToken
+        // so no need to continue
+        if (refRes.status === 401) {
+          return;
+        }
         // call once again the end point to get current user
         res = await getCurrentAuthUser();
         data = await res.json();
@@ -32,10 +44,23 @@
 
       // set the response data in a store
       userStore.set(data);
+      // console.log(data)
       return data;
     } catch (error) {
       userStore.set(null);
       return null;
+    }
+  }
+
+  async function handleLogout() {
+    console.log('logout clicked');
+    try {
+      const res = await logout();
+      console.log(res);
+      user = null;
+      goto('/login');
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -53,4 +78,21 @@
   setContext('auth', userStore);
 </script>
 
-{@render children()}
+{#if !excludedRoutes.includes($page.url.pathname)}
+  <div class="flex h-screen flex-col">
+    <!-- Navbar -->
+    <Navbar
+      logout={handleLogout}
+      class="flex h-16 items-center justify-between bg-blue-500 px-4 shadow-md"
+    />
+
+    <div class="flex flex-grow overflow-hidden">
+      <!-- Sidebar -->
+      <Sidebar class="w-64 flex-shrink-0 overflow-y-auto bg-gray-200 p-4">
+        {@render children()}
+      </Sidebar>
+    </div>
+  </div>
+{:else}
+  {@render children()}
+{/if}
