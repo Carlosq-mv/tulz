@@ -75,6 +75,7 @@ export async function getCurrentAuthUser() {
       credentials: 'include',
     });
 
+    // return the response 
     return res;
   } catch (error) {
     throw error;
@@ -88,8 +89,8 @@ export async function refreshToken() {
       credentials: 'include'
     })
 
-    // parse and return the response JSON
-    return await res.json();
+    // return the response 
+    return res
   } catch (error) {
     throw error;
   }
