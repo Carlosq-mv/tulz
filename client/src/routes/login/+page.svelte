@@ -1,4 +1,5 @@
 <script>
+  import { goto } from '$app/navigation';
   import FormField from '$lib/components/FormField.svelte';
   import Alert from '$lib/components/Alert.svelte';
   import { login } from '$lib/api/auth';
@@ -22,6 +23,7 @@
       form.email = '';
       form.password = '';
       errorMessage = '';
+      goto('/home')
     } catch (error) {
       console.log(error);
       errorMessage = error;
@@ -31,13 +33,13 @@
   }
 </script>
 
-<div class="flex min-h-screen items-center justify-center bg-base-200">
-  <div class="card min-h-[75vh] w-full max-w-7xl bg-base-100 shadow-xl lg:card-side">
+<div class="bg-base-200 flex min-h-screen items-center justify-center">
+  <div class="card bg-base-100 lg:card-side min-h-[75vh] w-full max-w-7xl shadow-xl">
     <figure class="lg:w-3/5">
       <img src="/wood.jpg" alt="wood" class="h-full w-full object-cover" />
     </figure>
     <div class="card-body lg:w-1/2">
-      <h2 class="prose card-title mb-6 text-4xl font-bold text-accent">Login to Tulz</h2>
+      <h2 class="prose card-title text-accent mb-6 text-4xl font-bold">Login to Tulz</h2>
       {#if errorMessage}
         <Alert {errorMessage} />
       {/if}
