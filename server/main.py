@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from dotenv import load_dotenv
 import os
+import redis
 
 load_dotenv()
 
@@ -13,6 +14,7 @@ from routers.middleware.auth import JWTMiddleWare
 
 Base.metadata.create_all(bind=engine)
 
+redis_client = redis.StrictRedis(host="localhost", port=6379, db=0)
 app = FastAPI()
 
 allowed_url = os.getenv("ALLOWED_URL")
