@@ -4,7 +4,7 @@
 
 <div class="drawer lg:drawer-open">
   <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
-  <div class="drawer-content flex flex-col items-center justify-center">
+  <div class="drawer-content flex flex-col p-8">
     <!-- Page content here -->
     {#if children}
       {@render children()}
@@ -14,9 +14,54 @@
   <div class="drawer-side">
     <label for="my-drawer-2" aria-label="close sidebar" class="drawer-overlay"></label>
     <ul class="menu bg-base-200 text-base-content flex h-screen w-64 flex-col p-4">
+      <div class="divider mb-8">
+        <div class="flex items-center justify-center">
+          <p class="text-md font-black"># channels</p>
+        </div>
+      </div>
       <!-- Sidebar content here -->
-      <li><a href="/">Sidebar Item 1</a></li>
-      <li><a href="/">Sidebar Item 2</a></li>
+      <li>
+        <a href="/contacts" class="text-lg">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-contact h-5 w-5"
+            ><path d="M16 2v2" /><path d="M7 22v-2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2" /><path
+              d="M8 2v2"
+            /><circle cx="12" cy="11" r="3" /><rect
+              x="3"
+              y="4"
+              width="18"
+              height="18"
+              rx="2"
+            /></svg
+          >
+          Contacts
+        </a>
+        <a href="/search" class="text-lg">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-user-search h-5 w-5"
+            ><circle cx="10" cy="7" r="4" /><path d="M10.3 15H7a4 4 0 0 0-4 4v2" /><circle
+              cx="17"
+              cy="17"
+              r="3"
+            /><path d="m21 21-1.9-1.9" /></svg
+          >
+          Search
+        </a>
+      </li>
       <div class="flex-grow"></div>
 
       <!-- Theme switcher -->
