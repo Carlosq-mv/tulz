@@ -2,6 +2,7 @@
   import { goto } from '$app/navigation';
   import FormField from '$lib/components/FormField.svelte';
   import Alert from '$lib/components/Alert.svelte';
+  import { AlertType } from '$lib/constants/enums';
   import { login } from '$lib/api/auth';
 
   let form = $state({
@@ -23,7 +24,7 @@
       form.email = '';
       form.password = '';
       errorMessage = '';
-      goto('/home')
+      goto('/home');
     } catch (error) {
       console.log(error);
       errorMessage = error;
@@ -41,7 +42,7 @@
     <div class="card-body lg:w-1/2">
       <h2 class="prose card-title text-accent mb-6 text-4xl font-bold">Login to Tulz</h2>
       {#if errorMessage}
-        <Alert {errorMessage} />
+        <Alert type={AlertType.ERROR} message={errorMessage} />
       {/if}
       <form onsubmit={handleLogin} method="POST">
         <FormField

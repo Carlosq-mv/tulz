@@ -1,6 +1,7 @@
 <script>
   import FormField from '$lib/components/FormField.svelte';
   import Alert from '$lib/components/Alert.svelte';
+  import { AlertType } from '$lib/constants/enums';
   import { signup } from '$lib/api/auth';
 
   let form = $state({
@@ -33,15 +34,15 @@
   }
 </script>
 
-<div class="flex min-h-screen items-center justify-center bg-base-200">
-  <div class="card min-h-[75vh] w-full max-w-7xl bg-base-100 shadow-xl lg:card-side">
+<div class="bg-base-200 flex min-h-screen items-center justify-center">
+  <div class="card bg-base-100 lg:card-side min-h-[75vh] w-full max-w-7xl shadow-xl">
     <figure class="lg:w-3/5">
       <img src="/hut.jpg" alt="hut" class="h-full w-full object-cover" />
     </figure>
     <div class="card-body lg:w-1/2">
-      <h2 class="prose card-title mb-6 text-4xl font-bold text-accent">Signup to Tulz</h2>
+      <h2 class="prose card-title text-accent mb-6 text-4xl font-bold">Signup to Tulz</h2>
       {#if errorMessage}
-        <Alert {errorMessage} />
+        <Alert type={AlertType.ERROR} message={errorMessage} />
       {/if}
       <form onsubmit={handleSignup} method="POST">
         <FormField
