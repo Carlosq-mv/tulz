@@ -194,3 +194,27 @@ class UserServices():
         """
         if "@" not in email:
             raise HTTPException(status_code=400, detail="Invalid email format. Please try again.")
+
+    
+    async def search_by_username(self, username: str) -> UserResponse:
+        """ Search for user by only using username
+
+        Args:
+            username (str): Username of user 
+
+        Raises:
+            HTTPException: No username in query parameter (no search criteria).
+            HTTPException: User does not exist in database. 
+
+        Returns:
+            UserResponse: Schema model of user object. 
+        """
+        if username is None or username == "":
+            raise HTTPException(status_code=400, detail="No search criteria present. Enter a username.")
+
+        user = self.dao.get_user_by_username(username)
+
+        if user is None:
+            raise HTTPException(status_code=400, detail="User does not exist.")
+        
+        return user

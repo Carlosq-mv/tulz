@@ -81,3 +81,9 @@ async def current_user(request: Request) -> UserResponse:
 async def get_all_users(user_services: UserServices = Depends(get_user_services)) -> list[UserResponse]:
     users = await user_services.get_all_users() 
     return [UserResponse.model_validate(u) for u in users]
+
+
+# search for a user using their username
+@u_api.get("/search", response_model=UserResponse)
+async def search(username: str, user_services: UserServices = Depends(get_user_services)) -> UserResponse:
+    return await user_services.search_by_username(username)
