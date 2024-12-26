@@ -12,7 +12,7 @@
   import { redirect } from '@sveltejs/kit';
 
   let { children } = $props();
-  let excludedRoutes = ['/login', '/signup'];
+  let excludedRoutes = ['/login', '/signup', '/'];
 
   // reactive variable 'user' that initialized will be used to hold the authenticated user data.
   let user = $state(null);
