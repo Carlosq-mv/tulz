@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel, ConfigDict
 from models.contact import Status
 
@@ -8,15 +9,19 @@ class ContactBase(BaseModel):
    
    
 # used to create a contact 
-class ContactCreate(ContactBase):
-    user_id: int
+class ContactForm(BaseModel):
+    current_user_id: int
+    friend_id: int
    
    
 # used to return contact  
-class ContactResponse(ContactBase):
+class ContactResponse(BaseModel):
     id: int
-    user_id: int
-    status: Status | None = None
+    current_user_id: int  # ID of the user who initiated the contact
+    friend_id: int   # ID of the user being contacted
+    status: Status | None = None  # Contact status (e.g., PENDING, ACCEPTED)
+    date_added: datetime | None = None  # Optional, for accepted contacts
+    last_updated: datetime  # Timestamp for when the contact was last updated
     model_config = ConfigDict(from_attributes=True)
 
 
