@@ -4,7 +4,7 @@
 
 <div class="drawer lg:drawer-open">
   <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
-  <div class="drawer-content flex flex-col p-8">
+  <div class="drawer-content flex flex-col p-8 overflow-auto h-screen pb-20">
     <!-- Page content here -->
     {#if children}
       {@render children()}
