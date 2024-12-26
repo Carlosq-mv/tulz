@@ -10,7 +10,7 @@ from schemas.token_schema import TokenData
 SECRET_KEY = os.getenv("SECRET_KEY")
 REFRESH_KEY = os.getenv("REFRESH_KEY")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MIN = 1
+ACCESS_TOKEN_EXPIRE_MIN = 60
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 class JwtHelper():
