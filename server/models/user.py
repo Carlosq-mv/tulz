@@ -13,8 +13,21 @@ class User(Base):
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
 
-    contacts = relationship("Contact", back_populates="user", cascade="all, delete-orphan")
-
+    # Relationships for contacts
+    sent_contacts = relationship(
+        "Contact",
+        foreign_keys="[Contact.current_user_id]",
+        back_populates="user_1",
+        cascade="all, delete-orphan",
+        overlaps="contact_1"
+    )
+    received_contacts = relationship(
+        "Contact",
+        foreign_keys="[Contact.friend_id]",
+        back_populates="user_2",
+        cascade="all, delete-orphan",
+        overlaps="contact_2"
+    )
     def set_password(self, password: str):
         p = password.encode("utf-8")
         salt = bcrypt.gensalt()
