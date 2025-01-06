@@ -31,13 +31,13 @@
 
   async function handleAddContact(data) {
     const payload = {
-      username: data.username,
-      user_id: data.id
+      current_user_id: 9999,
+      friend_id: data.id
     };
     try {
       const res = await addContact(payload);
       addContactErrorMessage = '';
-      successMessage = `Succesfully requested to add ${res.username} as contact.`;
+      successMessage = `Succesfully requested to add ${data.username} as contact.`;
       console.log(res);
     } catch (error) {
       successMessage = '';
